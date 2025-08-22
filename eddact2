@@ -1,0 +1,218 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.sistemas.listas.listas;
+
+/**
+ *
+ * @author arman
+ */
+   
+    import java.util.Date;
+import java.util.Scanner;
+
+import java.util.Date;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        boolean salir = false;
+
+        while (!salir) {
+            System.out.println("\n=== MENÚ PRINCIPAL ===");
+            System.out.println("1. Lista de enteros");
+            System.out.println("2. Lista de cadenas");
+            System.out.println("3. Lista de fechas");
+            System.out.println("4. Lista de contactos");
+            System.out.println("5. Pila y Cola (Sistema simulado)"); // NUEVA OPCIÓN
+            System.out.println("6. Salir");
+            System.out.print("Elige una opción: ");
+            int opcion = sc.nextInt();
+            sc.nextLine(); // limpiar buffer
+
+            switch (opcion) {
+                case 1 -> manejarListaEnteros(sc);
+                case 2 -> manejarListaStrings(sc);
+                case 3 -> manejarListaFechas(sc);
+                case 4 -> manejarListaContactos(sc);
+                case 5 -> manejarPilaYCola(sc); // NUEVO MÉTODO
+                case 6 -> salir = true;
+                default -> System.out.println("Opción inválida.");
+            }
+        }
+        sc.close();
+    }
+
+    // ===== Métodos para cada tipo de lista =====
+    private static void manejarListaEnteros(Scanner sc) {
+        LinkedList<Integer> lista = new LinkedList<>();
+        DataTypeExamples.ejemploEntero(lista);
+        menuListaGenerico(sc, lista, Integer.class);
+    }
+
+    private static void manejarListaStrings(Scanner sc) {
+        LinkedList<String> lista = new LinkedList<>();
+        DataTypeExamples.ejemploString(lista);
+        menuListaGenerico(sc, lista, String.class);
+    }
+
+    private static void manejarListaFechas(Scanner sc) {
+        LinkedList<Date> lista = new LinkedList<>();
+        DataTypeExamples.ejemploFecha(lista);
+        menuListaGenerico(sc, lista, Date.class);
+    }
+
+    private static void manejarListaContactos(Scanner sc) {
+        LinkedList<Contacto> lista = new LinkedList<>();
+        DataTypeExamples.ejemploContactos(lista);
+        menuListaContactos(sc, lista);
+    }
+
+    // ===== NUEVO MÉTODO PARA PILA Y COLA =====
+    private static void manejarPilaYCola(Scanner sc) {
+        Pila<String> pila = new Pila<>();
+        Cola<String> cola = new Cola<>();
+        boolean volver = false;
+
+        while (!volver) {
+            System.out.println("\n--- MENÚ PILA Y COLA ---");
+            System.out.println("1. Push a Pila (Historial de comandos)");
+            System.out.println("2. Pop de Pila (Deshacer último comando)");
+            System.out.println("3. Mostrar Pila");
+            System.out.println("4. Enqueue a Cola (Agregar programa)");
+            System.out.println("5. Dequeue de Cola (Procesar programa)");
+            System.out.println("6. Mostrar Cola");
+            System.out.println("7. Volver al menú principal");
+            System.out.print("Opción: ");
+            int op = sc.nextInt();
+            sc.nextLine();
+
+            switch (op) {
+                case 1 -> {
+                    System.out.print("Introduce comando: ");
+                    String cmd = sc.nextLine();
+                    pila.push(cmd);
+                }
+                case 2 -> {
+                    String eliminado = pila.pop();
+                    System.out.println(eliminado != null ? "Comando eliminado: " + eliminado : "Pila vacía");
+                }
+                case 3 -> pila.display();
+                case 4 -> {
+                    System.out.print("Introduce programa: ");
+                    String prog = sc.nextLine();
+                    cola.enqueue(prog);
+                }
+                case 5 -> {
+                    String procesado = cola.dequeue();
+                    System.out.println(procesado != null ? "Programa procesado: " + procesado : "Cola vacía");
+                }
+                case 6 -> cola.display();
+                case 7 -> volver = true;
+                default -> System.out.println("Opción inválida.");
+            }
+        }
+    }
+
+    // ===== Menú genérico para cualquier tipo de lista =====
+    private static <T> void menuListaGenerico(Scanner sc, LinkedList<T> lista, Class<T> tipo) {
+        boolean volver = false;
+        while (!volver) {
+            System.out.println("\n--- MENÚ LISTA ---");
+            System.out.println("1. Insertar elemento");
+            System.out.println("2. Eliminar elemento");
+            System.out.println("3. Buscar elemento");
+            System.out.println("4. Mostrar lista");
+            System.out.println("5. Volver al menú principal");
+            System.out.print("Opción: ");
+            int op = sc.nextInt();
+            sc.nextLine();
+
+            switch (op) {
+                case 1 -> {
+                    System.out.print("Introduce el valor: ");
+                    String valor = sc.nextLine();
+                    lista.insert(convertirValor(valor, tipo));
+                }
+                case 2 -> {
+                    System.out.print("Introduce el valor a eliminar: ");
+                    String valEliminar = sc.nextLine();
+                    lista.delete(convertirValor(valEliminar, tipo));
+                }
+                case 3 -> {
+                    System.out.print("Introduce el valor a buscar: ");
+                    String valBuscar = sc.nextLine();
+                    boolean encontrado = lista.search(convertirValor(valBuscar, tipo));
+                    System.out.println(encontrado ? "Encontrado" : "No encontrado");
+                }
+                case 4 -> lista.display();
+                case 5 -> volver = true;
+                default -> System.out.println("Opción inválida.");
+            }
+        }
+    }
+
+    // ===== Menú especial para Contactos =====
+    private static void menuListaContactos(Scanner sc, LinkedList<Contacto> lista) {
+        boolean volver = false;
+        while (!volver) {
+            System.out.println("\n--- MENÚ CONTACTOS ---");
+            System.out.println("1. Insertar contacto");
+            System.out.println("2. Eliminar contacto (por nombre)");
+            System.out.println("3. Buscar contacto (por nombre)");
+            System.out.println("4. Mostrar lista de contactos");
+            System.out.println("5. Volver al menú principal");
+            System.out.print("Opción: ");
+            int op = sc.nextInt();
+            sc.nextLine();
+
+            switch (op) {
+                case 1 -> {
+                    System.out.print("Nombre: ");
+                    String nombre = sc.nextLine();
+                    System.out.print("Dirección: ");
+                    String direccion = sc.nextLine();
+                    System.out.print("Teléfono: ");
+                    String telefono = sc.nextLine();
+                    lista.insert(new Contacto(nombre, direccion, telefono));
+                }
+                case 2 -> {
+                    System.out.print("Nombre del contacto a eliminar: ");
+                    String nombreEliminar = sc.nextLine();
+                    lista.delete(new Contacto(nombreEliminar, "", ""));
+                }
+                case 3 -> {
+                    System.out.print("Nombre del contacto a buscar: ");
+                    String nombreBuscar = sc.nextLine();
+                    boolean encontrado = lista.search(new Contacto(nombreBuscar, "", ""));
+                    System.out.println(encontrado ? "Encontrado" : "No encontrado");
+                }
+                case 4 -> lista.display();
+                case 5 -> volver = true;
+                default -> System.out.println("Opción inválida.");
+            }
+        }
+    }
+
+    // ===== Conversión segura de String a tipo =====
+    @SuppressWarnings("unchecked")
+    private static <T> T convertirValor(String valor, Class<T> tipo) {
+        if (tipo == Integer.class) {
+            return (T) Integer.valueOf(valor);
+        } else if (tipo == Date.class) {
+            return (T) java.sql.Date.valueOf(valor); // formato: yyyy-MM-dd
+        } else {
+            return (T) valor; // String u otros
+        }
+    }
+}
+
+
+    
+    
+    
+    
+
